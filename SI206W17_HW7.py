@@ -59,6 +59,38 @@ except:
 
 
 
+def getWithCaching(consumerKey, consumerSecret, accessToken, accessSecret, handle):
+  results_url = api.user_timeline(id=handle)
+
+  if handle in CACHE_DICTION: # if we've already made this request
+    # print('using cache')
+      # use stored response
+    response_text = CACHE_DICTION[handle] # grab the data from the cache
+  else: # otherwise
+    # print('fetching')
+    results = results_url
+    CACHE_DICTION[handle] = results   
+
+    #cache data
+    cache_file = open('206W17_HW7_cache.json', 'w')
+    cache_file.write(json.dumps(CACHE_DICTION))
+    cache_file.close()
+
+    response_text = CACHE_DICTION[handle] # whichver way we got the data, load it into a python object
+  return response_text # and return it from the function!
+
+def get_user_tweets(user_handle):
+	tweets = getWithCaching(consumer_key, consumer_secret, access_token, access_token_secret, user_handle)
+	# statuses = tweets["statuses"]
+	lst = []
+	for tweet in tweets:
+		lst.append(tweet["text"])
+	return lst
+
+
+tweets = get_user_tweets("umsi")
+print(tweets)
+
 # Write code to create/build a connection to a database: tweets.db,
 # And then load all of those tweets you got from Twitter into a database table called Tweets, with the following columns in each row:
 
