@@ -122,7 +122,7 @@ umsi_tweets = get_user_tweets("umsi")
 
 for tweet in umsi_tweets:
 	cur.execute('INSERT INTO Tweets (tweet_id, author, time_posted, tweet_text, retweets) VALUES (?, ?, ?, ?, ?)', (tweet['id'], tweet['user']['screen_name'], tweet['created_at'],tweet['text'], tweet['retweet_count']))
-	conn.commit()
+	conn.commit() #data succesfully commits
 
 
 # Use the database connection to commit the changes to the database
@@ -140,19 +140,29 @@ for tweet in umsi_tweets:
 
 
 # Select from the database all of the TIMES the tweets you collected were posted and fetch all the tuples that contain them in to the variable tweet_posted_times.
-
+tweet_posted_times = []
+cur.execute('SELECT * FROM Tweets')
+for row in cur:
+	tweet_posted_times.append(row)
 
 # Select all of the tweets (the full rows/tuples of information) that have been retweeted MORE than 2 times, and fetch them into the variable more_than_2_rts.
-
-
+more_than_2_rts = []
+cur.execute('SELECT * FROM Tweets WHERE retweets > 2')
+for row in cur:
+	more_than_2_rts.append(row)
 
 # Select all of the TEXT values of the tweets that are retweets of another account (i.e. have "RT" at the beginning of the tweet text). Save the FIRST ONE from that group of text values in the variable first_rt. Note that first_rt should contain a single string value, not a tuple.
-
+retweets = []
+first_rt = ""
+cur.execute('SELECT tweet_text FROM Tweets WHERE tweet_text like "RT%"')
+for row in cur:
+	retweets.append(row)
+first_rt = str(retweets[0])
 
 
 # Finally, done with database stuff for a bit: write a line of code to close the cursor to the database.
 
-
+cur.close()
 
 ## [PART 3] - Processing data
 
