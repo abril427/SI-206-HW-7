@@ -177,8 +177,16 @@ cur.close()
 # Also note that the SET type is what this function should return, NOT a list or tuple. We looked at very briefly at sets when we looked at set comprehensions last week. In a Python 3 set, which is a special data type, it's a lot like a combination of a list and a dictionary: no key-value pairs, BUT each element in a set is by definition unique. You can't have duplicates.
 
 # If you want to challenge yourself here -- this function definition (what goes under the def statement) CAN be written in one line! Definitely, definitely fine to write it with multiple lines, too, which will be much easier and clearer.
-
-
+def get_twitter_users(twitter_str):
+	twitter_lst = twitter_str.split()
+	
+	p = re.compile('@([A-Za-z0-9_]+)')
+	for word in twitter_lst:
+		# print (p.search(word))
+		m = p.match(word)
+		usernames = {word[1:] for word in twitter_lst if p.search(word)}
+			# usernames.append(word[1:]) }
+	return usernames
 
 
 
