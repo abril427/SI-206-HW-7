@@ -82,14 +82,11 @@ def getWithCaching(consumerKey, consumerSecret, accessToken, accessSecret, handl
 def get_user_tweets(user_handle):
 	tweets = getWithCaching(consumer_key, consumer_secret, access_token, access_token_secret, user_handle)
 	# statuses = tweets["statuses"]
-	lst = []
-	for tweet in tweets:
-		lst.append(tweet["text"])
-	return lst
+	# lst = []
+	# for tweet in tweets:
+	# 	lst.append(tweet["text"])
+	return tweets
 
-
-tweets = get_user_tweets("umsi")
-print(tweets)
 
 # Write code to create/build a connection to a database: tweets.db,
 # And then load all of those tweets you got from Twitter into a database table called Tweets, with the following columns in each row:
@@ -104,21 +101,28 @@ print(tweets)
 
 # Make a connection to a new database tweets.db, and create a variable to hold the database cursor.
 
+conn = sqlite3.connect('tweets.db')
+cur = conn.cursor()
 
 # Write code to drop the Tweets table if it exists, and create the table (so you can run the program over and over), with the correct (4) column names and appropriate types for each.
 # HINT: Remember that the time_posted column should be the TIMESTAMP data type!
 
+cur.execute('DROP TABLE IF EXISTS Tweets')
+cur.execute('CREATE TABLE Tweets (tweet_id INTEGER, author TEXT, time_posted TIMESTAMP, tweet_text TEXT, retweets INTEGER)')
 
 # Invoke the function you defined above to get a list that represents a bunch of tweets from the UMSI timeline. Save those tweets in a variable called umsi_tweets.
 
-
+umsi_tweets = get_user_tweets("umsi")
+# print(umsi_tweets)
 
 
 # Use a for loop, the cursor you defined above to execute INSERT statements, that insert the data from each of the tweets in umsi_tweets into the correct columns in each row of the Tweets database table.
 
 # (You should do nested data investigation on the umsi_tweets value to figure out how to pull out the data correctly!)
 
-
+for tweet in umsi_tweets:
+	cur.execute('INSERT INTO Tweets (tweet_id, author, time_posted, tweet_text, retweets) VALUES (?, ?, ?, ?, ?)', (tweet['id'], tweet['user']['screen_name'], tweet['created_at'],tweet['text'], tweet['retweet_count']))
+	conn.commit()
 
 
 # Use the database connection to commit the changes to the database
